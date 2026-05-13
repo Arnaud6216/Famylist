@@ -35,3 +35,14 @@ Avis de Emilie AUB, 3\*, 3 août 2025 :
 Extrait pertinent : "You can only add Amazon stuff, you can't include anything outside that world [...] MyRegistry took me a minute to figure out."
 
 **-> Constat :** Cela prouve le besoin de simplicité (UX) et de flexibilité. Une application trop complexe à configurer ou trop restrictive est immédiatement délaissée au profit d'outils plus intuitifs.
+
+### Source 4 : Avis des proches
+
+Ma famille et moi utilisons actuellement le site Listy.com pour gérer nos listes d'envies. En discutant avec eux de l'utilisation au quotidien, ils m'ont fait part de plusieurs points d'amélioration qu'ils aimeraient voir dans une nouvelle solution :
+
+> - Seules les personnes qui réservent peuvent voir la réservation, pas celui à qui on veut offrir le cadeau
+> - Quand on réserve, on ne voit pas le nom de ceux qui ont réservé, tout est anonyme pour tout le monde
+> - Il faut pouvoir préciser certains critères comme la couleur, la taille/pointure, le prix, le nombre/quantité qu'on souhaite. Sur Listy on peut l'ajouter mais tout le monde ne fait pas forcément attention à ce qu'on écrit, il n'y a pas de champs attitrés à ça.
+> - Pouvoir suggérer un ordre de priorité dans les cadeaux que l'on souhaite, si on veut de l'occasion, un favori
+> - Ne pas envoyer de mail à la personne quand un cadeau lui est reservé (pour laisser la surprise jusqu'au bout)
+> - Un effet visuel quand on clique sur "réserver"
