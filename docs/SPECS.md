@@ -59,7 +59,7 @@ Divergence : À l'étape 4 du Basic Scenario.
 
 ### User Story :
 
-En tant que Membre, je veux pouvoir créer, éditer ou supprimer une liste thématique afin de centraliser mes envies, que ce soit pour une occasion particulière ou simplement pour garder une trace de mes besoins.
+En tant que Membre, je veux pouvoir créer, consulter, éditer ou supprimer une liste thématique afin de centraliser mes envies, que ce soit pour une occasion particulière ou simplement pour garder une trace de mes besoins.
 
 **Scénario :** Création d'une liste
 

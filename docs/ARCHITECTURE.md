@@ -73,6 +73,8 @@ L'architecture de l'application intègre des pratiques d'éco-conception visant 
 
 - **Symfony 7:** Framework Backend de référence, sélectionné pour sa modularité et la puissance de ses composants de sécurité. Il offre un cadre rigoureux (MVC/Service Pattern) indispensable pour un projet structuré.
 
+- **Nginx :** Serveur web de production et proxy inversé. Il est chargé de réceptionner les requêtes HTTP/HTTPS du Frontend, de servir directement les fichiers statiques s'il y en a, et de transmettre les requêtes dynamiques à PHP-FPM (Symfony) de manière ultra-performante.
+
 ### Base de données
 
 - **PostgreSQL 17:** Pour sa robustesse et sa gestion stricte de l'intégrité des données.
