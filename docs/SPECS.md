@@ -8,10 +8,10 @@ En tant que Visiteur, je veux créer mon profil pour commencer à organiser mes 
 
 **Scénario :** Inscription sur l'application
 
-**Etant donné que** je suis sur la page d'inscription
-**Lorsque** je saisis un email valide, un mot de passe, un nom et que je valide le formulaire
-**Alors** mon compte est créé en base de données
-**Et** je suis redirigé vers mon tableau de bord
+**Etant donné que** je suis un visiteur sans compte actif
+**Lorsque** je m'inscris avec un nom, une adresse email valide et un mot de passe
+**Alors** mon compte utilisateur est créé
+**Et** je suis automatiquement authentifié sur mon espace personnel
 
 ### Use Case
 
@@ -55,7 +55,7 @@ Divergence : À l'étape 4 du Basic Scenario.
 
 - Retour : Le système maintient le Visiteur sur le formulaire pour correction.
 
-## 2 - Gestion de liste
+## 2 - Gestion de liste de souhaits
 
 ### User Story :
 
@@ -63,23 +63,24 @@ En tant que Membre, je veux pouvoir créer, consulter, éditer ou supprimer une 
 
 **Scénario :** Création d'une liste
 
-    Etant donné que je suis connecté sur mon tableau de bord et que je me rends sur la page "Mes listes"
+    Étant donné que je suis connecté à mon espace membre
     Lorsque je crée une liste intitulée "Noël 2026"
-    Alors la liste est enregistrée et apparaît dans la page 'Mes listes'
-    Et je suis redirigé vers cette page
+    Alors la liste est enregistrée et associée à mon profil
+    Et j'accède directement à l'espace de cette liste pour commencer à y ajouter mes envies
 
-**Scénario :** Édition d'une liste
+**Scénario :** Modification d'une liste existante
 
-    Etant donné que je consulte le détail de ma liste "Noël 2026"
+    Etant donné que je consulte ma liste "Noël 2026"
     Lorsque je renomme cette liste en "Noël en Famille"
-    Alors le titre est mis à jour et je suis redirigé sur la page "Mes listes".
+    Alors les nouvelles informations sont enregistrées
+    Et ma liste est immédiatement mise à jour à l'écran
 
 **Scénario :** Suppression d'une liste
 
-    Etant donné que je suis sur mon tableau de bord
-    Lorsque je décide de supprimer la liste "Noël en Famille" et que je confirme cette action
-    Alors la liste disparaît de mon espace personnel
-    Et toutes les données liées à cette liste sont effacées
+    Étant donné que je consulte ma liste "Noël en Famille"
+    Lorsque je demande la suppression définitive de cette liste et que je confirme mon choix
+    Alors la liste et l'ensemble des articles associés sont définitivement supprimés
+    Et je suis redirigé vers mon tableau de bord
 
 ### Use Case
 
@@ -89,50 +90,49 @@ Objectif : Permettre au Membre d'ajouter une nouvelle liste à son espace.
 
 Acteur principal : Membre
 
-- Step 1 : Le Membre accède à la page "Mes listes" de son tableau de bord.
+- Step 1 : Le Membre sollicite la création d'une liste depuis son tableau de bord.
 
-- Step 2 : Le Membre clique sur le bouton "Créer une liste".
+- Step 2 : Le système ouvre la modale de création.
 
-- Step 3 : Le système affiche un formulaire de saisie.
+- Step 3 : Le Membre renseigne les informations et valide.
 
-- Step 4 : Le Membre saisit le titre de la liste (ex: "Noël 2026") et valide.
+- Step 4 : Le système contrôle la validité des champs obligatoires.
 
-- Step 5 : Le système enregistre la liste en base de données pour l'ID du membre.
+- Step 5 : Le système persiste la nouvelle liste en base de données pour l'utilisateur connecté.
 
-- Step 6 : Le système ferme le formulaire et rafraîchit la page "Mes listes" pour afficher la nouvelle liste parmi les autres.
+- Step 6 : Le système ferme la modale et redirige le Membre vers la page de détail de sa nouvelle liste.
 
 #### Extensions (Alternate Paths)
 
 **E1 : Édition d'une liste (Update & Annulation)**
 
-Divergence : À partir de la page "Mes listes".
+Divergence : Depuis la page de détail de la liste".
 
-- Step 1 : Le Membre clique sur l'icône "modifier" (sur la carte) ou sur le bouton de modification dans la liste.
+- Step 1 : Le Membre déclenche la modification de la liste.
 
-- Step 2 : Le système redirige le Membre vers la page d'édition.
+- Step 2 : Le système ouvre la modale pré-remplie avec les informations courantes.
 
 - Step 3 : Le Membre modifie les informations.
 
 - Step 4 :
-  - Option A (Validation) : Le Membre clique sur "Enregistrer". Le système met à jour la base de données.
+  - Option A (Validation) : Le Membre enregistre. Le système met à jour les informations en base de données et actualise
+    l'affichage.
 
-  - Option B (Annulation) : Le Membre clique sur "Annuler" ou le bouton retour. Aucune modification n'est enregistrée.
-
-- Retour : Dans les deux cas, le système redirige le Membre vers la page "Mes listes".
+  - Option B (Annulation) : Le Membre annule. Le système referme la modale sans appliquer de modification.
 
 **E2 : Suppression (Delete)**
 
-Divergence : Peut se produire sur la page "Mes listes".
+Divergence : Depuis la page de détail de la liste.
 
-- Step 1 : Le Membre clique sur l'icône "Supprimer" (sur la carte) ou sur le bouton de suppression dans la liste.
+- Step 1 : Le Membre déclenche la suppression de la liste.
 
-- Step 2 : Le système demande une confirmation.
+- Step 2 : Le système demande une confirmation explicite pour prévenir toute suppression accidentelle.
 
 - Step 3 : Le Membre confirme.
 
-- Step 4 : Le système supprime la liste et tout son contenu.
+- Step 4 : Le système supprime la liste et réalise la suppression en cascade de toutes les envies associées.
 
-- Retour : Le système redirige (ou maintient) le Membre sur la page "Mes listes".
+- Retour : Le système redirige le Membre vers son tableau de bord.
 
 **E3 : Erreur de saisie (Validation)**
 
@@ -142,7 +142,7 @@ Divergence : À l'étape de validation du Basic Scenario ou de l'E1.
 
 - Step 2 : Le système bloque l'enregistrement et affiche un message d'erreur.
 
-- Retour : Le système maintient le Membre sur le formulaire pour correction.
+- Retour : La modale reste ouverte pour permettre la correction.
 
 <!-- ## 3 - Ajout d'article via Scraper
 
