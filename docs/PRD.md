@@ -24,33 +24,34 @@
 
 ### Bryan, 21 ans, Le neveu geek
 
-- **Profil :** Jeune actif, descends 5 minutes pour manger du gâteau, toujours sur son smartphone, puis repart.
-- **Besoin :** Consulter la liste et réserver un cadeau en moins de 30 secondes sans créer de compte.
-- **Frustration :** Les formulaires d'inscription interminables et la validation d'email par lien reçu dans les spams.
+- **Profil :** Jeune actif, descend 5 minutes pour manger du gâteau, toujours sur son smartphone, puis repart.
+- **Besoin :** Consulter la liste immédiatement sans contrainte d'installation ni de compte, et réserver un cadeau en quelques secondes via un compte rapidement connecté.
+- **Frustration :** Les formulaires d'inscription interminables avec trop d'étapes de validation.
 
 ## Proposition de Valeur Unique
 
-- Le secret automatique : L’app gère elle-même qui voit quoi. Le destinataire ne peut pas savoir ce qui est réservé, sans qu'il ait besoin de bidouiller des réglages.
-- Zéro inscription pour les invités : On peut consulter et réserver un cadeau juste avec un lien, sans créer de compte ni retenir un mot de passe.
+- Le secret automatique : L’application gère elle-même la visibilité. Le destinataire ne peut pas savoir ce qui est réservé sur sa propre liste, préservant totalement l'effet de surprise.
+- Consultation libre et universelle : Tout proche disposant du lien de partage (token sécurisé) accède instantanément à la liste vitrine en lecture seule, sans avoir à créer de compte.
+- Réservation authentifiée et fiable : La réservation nécessite un compte connecté, assurant une responsabilisation contre les réservations abusives et permettant au contributeur de gérer ou annuler son cadeau à tout moment.
 - Scraping d'URL simplifié : En collant un lien marchand (Amazon, Fnac, etc.), l'application récupère automatiquement les informations du produit pour éviter une saisie manuelle.
 
 ## Fonctionnalité principale (V1)
 
 Le cœur de l'application est un système de Listes Collaboratives Dynamiques. Techniquement, cela se décompose en trois actions indissociables :
 
-    - La Création : Valérie crée une liste et y ajoute des idées (via le scraper).
+    - La Création : Valérie crée une liste et y ajoute des idées (via le scraper ou saisie manuelle).
 
-    - Le Partage : L'application génère un lien sécurisé unique que Valérie envoie à sa tribu.
+    - Le Partage : L'application génère un lien sécurisé unique (token) que Valérie envoie à ses proches.
 
-    - La Consultation/Action : Lysiane ou Bryan ouvrent le lien, voient les photos et réservent un cadeau en un clic.
+    - La Consultation/Action : Lysiane ou Bryan ouvrent le lien en lecture seule, visualisent les articles et leur état de disponibilité, puis se connectent pour réserver un cadeau en un clic.
 
 ## Métriques de succès
 
 - Efficacité de l'ajout : Moins de 30 secondes pour ajouter un cadeau complet grâce au scraper.
 
-- Accessibilité Invité : Réussite d'une réservation par un utilisateur tiers en moins de 3 clics à partir de l'ouverture du lien.
+- Accessibilité & Conversion : Consultation immédiate en 1 clic sans inscription ; parcours de réservation (connexion / inscription rapide incluse) réalisable en moins d'une minute.
 
-- Fiabilité des réservations : Zéro doublon signalé sur un événement grâce à la gestion des états en temps réel.
+- Fiabilité des réservations : Zéro doublon signalé sur un événement grâce à la gestion de la concurrence et à la traçabilité des utilisateurs connectés.
 
 ## Hors périmètre
 
@@ -72,16 +73,14 @@ Le cœur de l'application est un système de Listes Collaboratives Dynamiques. T
 
       Solution : Formulaire de saisie manuelle en cas d'échec de l'extraction.
 
-- **Hypothèse : Persistance de la session "Invité"**
+- **Arbitrage architectural : Abandon de la réservation invité sans compte**
 
-  On part du principe qu'un invité doit pouvoir retrouver sa réservation s'il ferme son navigateur par erreur.
+      Risque initial : Permettre aux invités non connectés de réserver entraînait des réservations fantômes (trolling), une rupture d'expérience en cas de fermeture du navigateur (perte du cookie/localStorage) et une complexité excessive de gestion de sessions éphémères.
 
-      Risque : Si l'invité n'a pas de compte, comment "annuler" une erreur de clic ?
-
-      Solution : Utiliser les LocalStorages du navigateur ou des Cookies pour lier temporairement la réservation à l'appareil de l'invité sans qu'il ait besoin de se connecter.
+      Solution retenue : Maintien de l'accès public en lecture seule pour la consultation de la liste, mais obligation d'authentification pour toute réservation. Le modèle de données est clarifié (`wishes.user_id`), la responsabilité est garantie et l'utilisateur peut modifier sa réservation depuis n'importe quel terminal.
 
 - **Risque métier : Le "Conflit de Réservation"**
 
-      Risque : Deux utilisateur pourrait réserver le même article en même temps.
+      Risque : Deux utilisateurs pourraient tenter de réserver le même article simultanément.
 
-      Solution : Gestion de la concurrence au niveau de PostgreSQL (transactions). Le premier clic verrouille la ligne en base de données, et le deuxième reçoit un message d'erreur.
+      Solution : Gestion de la concurrence au niveau de PostgreSQL (transactions / verrouillage pessimiste ou optimistic locking). Le premier clic valide la réservation, et la seconde requête reçoit un message d'erreur explicite avec rafraîchissement de l'état.

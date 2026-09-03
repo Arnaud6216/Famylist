@@ -28,12 +28,17 @@ Pour protéger les données utilisateurs, j'applique les principes de sécurité
 
 - **Authentification et gestion des secrets :**
   - **Gestion de la session :** L'authentification est sécurisée par le composant Security de Symfony. À chaque connexion, un identifiant de session unique est généré. Pour protéger cette connexion, le cookie de session est configuré avec les drapeaux HttpOnly (invisible pour les scripts JS, contre le vol de session) et Secure (transmis uniquement via HTTPS).
+  - **Cloisonnement des accès API :** L'endpoint de consultation publique d'une liste (`GET /api/shared-lists/{token}`) est accessible aux visiteurs anonymes (lecture seule). En revanche, les actions de mutation d'état (`POST /api/wishes/{id}/reserve` et `DELETE /api/wishes/{id}/reserve`) sont strictement protégées par le firewall Symfony (`#[IsGranted('ROLE_USER')]`), imposant une authentification active.
 
   - **Hachage :** Les mots de passe ne sont jamais stockés en clair. J'utilise l'algorithme Argon2 via le composant Security de Symfony.
 
   - **Variables d'environnement :** Toutes les données sensibles sont stockées dans un fichier .env, qui est exclu du versioning (Git) pour éviter toute fuite de secrets sur les dépôts distants.
 
-- **Gestion des permissions (Voters) :** Pour éviter les failles de type IDOR (où un utilisateur pourrait modifier la liste d'un autre en changeant simplement l'ID dans l'URL), Symfony intègre un système de Voters. Avant chaque action de modification ou de suppression, le code interroge un Voter qui vérifie que l'utilisateur connecté possède bien les droits de "Propriétaire" sur la ressource ciblée.
+- **Gestion des permissions (Voters) :** Pour éviter les failles de type IDOR et respecter la logique métier, Symfony intègre un système de Voters :
+  - `ListVoter` : vérifie que l'utilisateur est le propriétaire de la liste avant toute modification ou suppression (`list.user_id == user.id`).
+  - `WishVoter` :
+    - Action `RESERVE` : vérifie que l'utilisateur connecté n'est pas le propriétaire de la liste (`wish.list.user_id != user.id`) et que le cadeau est disponible (`reserved_by IS NULL`).
+    - Action `CANCEL_RESERVATION` : vérifie que seul l'utilisateur ayant réservé le cadeau (`wish.user_id == user.id`) peut annuler la réservation.
 
 - **Protection contre les attaques XSS :** Vue.js intègre une protection native : toutes les données insérées dans le HTML sont automatiquement "échappées", ce qui empêche l'injection de scripts malveillants.
 
