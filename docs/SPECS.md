@@ -70,20 +70,28 @@ En tant que Membre, je veux pouvoir créer, consulter, modifier ou supprimer une
 
 ### User Story :
 
-En tant que Membre, je veux ajouter un article manuellement ou via son lien URL afin que l'application pré-remplisse les informations (titre, prix, image) tout en me laissant la possibilité de les ajuster.
+En tant que Membre, je veux ajouter manuellement une idée de cadeau à ma liste avec ses caractéristiques (titre, prix estimatif, commentaire, lien marchand, image) afin de communiquer mes souhaits à mes proches.
 
-**Scénario :** Ajout automatique via URL marchand
+**Scénario 1 : Ajout manuel d'une envie avec détails complets**
 
     Étant donné que je suis connecté et sur la page de ma liste "Noël 2026"
-    Lorsque je saisis le lien d'un produit e-commerce valide dans le champ "Ajouter via un lien"
-    Alors le système extrait et pré-remplit le titre, le prix indicatif et l'image du produit
-    Et je peux ajuster les données avant de valider l'ajout dans ma liste
+    Lorsque je saisis manuellement un titre "Livre SF", un commentaire "Édition reliée", un prix estimé de "25.00" et l'URL du produit
+    Alors l'envie est enregistrée en base de données et rattachée à ma liste
+    Et elle apparaît immédiatement sur l'affichage de ma liste
 
-**Scénario :** Ajout manuel d'une envie
+**Scénario 2 : Ajout minimaliste réussi (champs obligatoires uniquement)**
 
-    Étant donné que je suis connecté et sur la page de ma liste
-    Lorsque je renseigne manuellement un intitulé, une description et un prix estimatif
-    Alors l'envie est enregistrée et immédiatement affichée sur ma liste
+    Étant donné que je suis connecté sur la page de ma liste
+    Lorsque je saisis uniquement le titre obligatoire "Écharpe en laine" sans renseigner le prix ni le lien
+    Alors l'envie est créée avec succès avec les champs optionnels à NULL
+    Et elle s'affiche correctement sur ma liste
+
+**Scénario 3 : Échec d'ajout pour données invalides**
+
+    Étant donné que je tente d'ajouter une envie avec un titre vide ou un prix négatif
+    Lorsque je valide le formulaire d'ajout
+    Alors le système bloque la création et affiche un message d'erreur contextuel
+    Et aucune donnée n'est persistée en base de données
 
 ---
 
@@ -191,20 +199,3 @@ En tant qu'Utilisateur ayant réservé un cadeau, je veux pouvoir annuler ma ré
     Lorsque l'utilisateur B tente d'envoyer une requête d'annulation de cette réservation
     Alors le serveur refuse l'opération via un Voter de sécurité (HTTP 403 Forbidden)
     Et l'état de réservation reste inchangé en base de données
-
----
-
-# Règles de Gestion Métier (RG)
-
-| Identifiant       | Domaine         | Règle de Gestion                                                                                                                                                                                                                              |
-| :---------------- | :-------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **RG-CONSULT-01** | Consultation    | **Accès public en lecture seule :** Tout utilisateur possédant le lien de partage avec un token valide peut consulter la liste et ses envies en lecture seule, sans authentification obligatoire.                                             |
-| **RG-CONSULT-02** | Confidentialité | **Préservation de la surprise :** Le propriétaire de la liste ne doit voir aucun statut ni détail de réservation sur sa propre liste. Le badge "Réservé" n'est visible que par les tiers (visiteurs et membres contributeurs).                |
-| **RG-CONSULT-03** | Confidentialité | **Anonymat inter-contributeurs :** Pour les tiers, un article réservé affiche uniquement le badge "Réservé" sans divulguer l'identité du membre réservant (seul le membre ayant lui-même réservé voit "Réservé par vous").                    |
-| **RG-CONSULT-04** | Ergonomie UI    | **Sobriété d'affichage :** Un article disponible (non réservé) n'affiche aucun badge de statut particulier. Seuls les articles réservés portent le badge visuel "Réservé".                                                                    |
-| **RG-RESERV-01**  | Réservation     | **Authentification obligatoire :** Pour effectuer une réservation, l'utilisateur doit impérativement être authentifié avec un compte Famylist valide (`users.user_id` non NULL).                                                              |
-| **RG-RESERV-02**  | Réservation     | **Disponibilité préalable :** Une envie ne peut être réservée que si son statut actuel est disponible (`wishes.user_id IS NULL` et `wishes.reserved_at IS NULL`).                                                                             |
-| **RG-RESERV-03**  | Réservation     | **Horodatage et attribution :** Lors de la réservation, le système associe de manière atomique l'ID de l'utilisateur connecté (`wishes.user_id`) et la date/heure serveur courante (`wishes.reserved_at`).                                    |
-| **RG-RESERV-04**  | Réservation     | **Interdiction d'auto-réservation :** Un utilisateur ne peut en aucun cas réserver une envie sur une liste dont il est le propriétaire.                                                                                                       |
-| **RG-RESERV-05**  | Réservation     | **Droit d'annulation strict :** Seul l'utilisateur ayant réservé une envie (`auth_user.id == wishes.user_id`) a le droit d'annuler sa réservation. L'annulation remet `user_id` et `reserved_at` à `NULL` et supprime le badge "Réservé".     |
-| **RG-RESERV-06**  | Données         | **Suppression du mode invité non connecté :** Aucun stockage volatile (nom/email invité) ni entité de réservation invitée n'est toléré dans le système. Toutes les réservations sont strictement rattachées au compte utilisateur centralisé. |

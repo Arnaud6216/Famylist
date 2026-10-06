@@ -33,13 +33,13 @@
 - Le secret automatique : L’application gère elle-même la visibilité. Le destinataire ne peut pas savoir ce qui est réservé sur sa propre liste, préservant totalement l'effet de surprise.
 - Consultation libre et universelle : Tout proche disposant du lien de partage (token sécurisé) accède instantanément à la liste vitrine en lecture seule, sans avoir à créer de compte.
 - Réservation authentifiée et fiable : La réservation nécessite un compte connecté, assurant une responsabilisation contre les réservations abusives et permettant au contributeur de gérer ou annuler son cadeau à tout moment.
-- Scraping d'URL simplifié : En collant un lien marchand (Amazon, Fnac, etc.), l'application récupère automatiquement les informations du produit pour éviter une saisie manuelle.
+- Liens marchands universels : Possibilité d'associer un lien marchand vers n'importe quel site web (Amazon, Fnac, boutique locale, etc.) pour guider les proches dans l'achat (l'extraction automatique par scraping est planifiée pour la V2 afin de garantir une V1 simple et robuste).
 
 ## Fonctionnalité principale (V1)
 
 Le cœur de l'application est un système de Listes Collaboratives Dynamiques. Techniquement, cela se décompose en trois actions indissociables :
 
-    - La Création : Valérie crée une liste et y ajoute des idées (via le scraper ou saisie manuelle).
+    - La Création : Valérie crée une liste et y ajoute des idées via un formulaire de saisie rapide (titre obligatoire, prix estimé, commentaire, lien marchand et image optionnels).
 
     - Le Partage : L'application génère un lien sécurisé unique (token) que Valérie envoie à ses proches.
 
@@ -47,31 +47,27 @@ Le cœur de l'application est un système de Listes Collaboratives Dynamiques. T
 
 ## Métriques de succès
 
-- Efficacité de l'ajout : Moins de 30 secondes pour ajouter un cadeau complet grâce au scraper.
+- Efficacité de l'ajout : Moins de 30 secondes pour ajouter un cadeau complet via le formulaire de saisie rapide.
 
 - Accessibilité & Conversion : Consultation immédiate en 1 clic sans inscription ; parcours de réservation (connexion / inscription rapide incluse) réalisable en moins d'une minute.
 
 - Fiabilité des réservations : Zéro doublon signalé sur un événement grâce à la gestion de la concurrence et à la traçabilité des utilisateurs connectés.
 
-## Hors périmètre
+## Hors périmètre (V1)
 
+- Scraping automatique d'URL : L'extraction automatisée des métadonnées e-commerce (titre, prix, photo) à partir d'un lien marchand est reportée à une prochaine version afin de garder un périmètre V1 simple, rapide à déployer et fiable.
 - Pas de paiement intégré : L'application ne gère pas de cagnottes ni de transactions bancaires (on se contente de rediriger vers le site marchand).
-
 - Pas de gestion de prix dynamique : On ne surveille pas les baisses de prix après l'ajout.
-
-- Pas d'envoi de mail : Tout se passe sur l'application.
-
+- Pas d'envoi de mail (en V1) : Tout se passe sur l'application via le partage par lien unique. Une version hybride combinant le partage de lien et l'ajout direct de membres par e-mail sera mise en place dans une prochaine version.
 - Système de groupe (tribus) : sera implémenté dans une prochaine version.
-
 - Secret Santa : Le tirage au sort automatisé sera implémenté dans une prochaine version.
 
 ## Hypothèses et Risques
 
-- **Risque technique : Fragilité du scraping**
+- **Arbitrage technique : Report du scraping automatique en V2**
 
-      Risque : Les informations du site marchand ne sont pas ou mal récupérées par l'outil de scraping.
-
-      Solution : Formulaire de saisie manuelle en cas d'échec de l'extraction.
+      Contexte : Les algorithmes de scraping de sites e-commerce tiers sont complexes et fragiles (mises à jour de balisage DOM, mécanismes anti-bots, captchas).
+      Solution retenue : Pour la V1, saisie manuelle via un formulaire fluide et intuitif, avec possibilité de renseigner l'URL marchande pour les proches. Le moteur de scraping dédié sera développé lors d'une prochaine version.
 
 - **Arbitrage architectural : Abandon de la réservation invité sans compte**
 

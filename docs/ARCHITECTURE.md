@@ -14,7 +14,7 @@ Pour le projet FamyList, j'ai choisi une architecture multicouche basée sur le 
 
 - **Couche de Présentation (Routing & Controllers) :** C’est le point d'entrée de l'API et qui gère le cycle requête/réponse. Les contrôleurs se contentent de réceptionner les requêtes, de valider les données qui arrivent via des DTO (Data Transfer Objects), et de renvoyer une réponse JSON une fois que le traitement est fini.
 
-- **Couche Métier (Services) :** Centralise la logique métier pure (ex: algorithme de scraping). Cette couche est isolée pour faciliter les tests unitaires et la réutilisation des composants.
+- **Couche Métier (Services) :** Centralise la logique métier pure (ex: gestion des réservations, validation métier). Cette couche est isolée pour faciliter les tests unitaires et la réutilisation des composants.
 
 - **Couche de Persistance (Repositories & ORM Doctrine) :** C’est le pont entre le code PHP et la base de données. L’ORM Doctrine permet de manipuler des objets plutôt que de faire des requêtes SQL "en dur". Les Repositories servent à centraliser les requêtes spécifiques (comme récupérer toutes les listes d'un utilisateur) pour ne pas polluer les contrôleurs.
 
@@ -44,7 +44,7 @@ Pour protéger les données utilisateurs, j'applique les principes de sécurité
 
 - **CORS (Cross-Origin Resource Sharing) :** Pour sécuriser les échanges entre le Frontend et l'API. Seul le domaine autorisé de l'application est autorisé à consommer l'API, empêchant ainsi des sites tiers malveillants d'effectuer des requêtes à l'insu de l'utilisateur.
 
-- **Le nettoyage du Scraping (Sanitisation) :** Lors du scraping des sites marchands, les données récupérées (titres, descriptions) sont nettoyées et filtrées avant d'être persistées via HTML Sanitizer de Symfony. On s'assure ainsi qu'aucun code malveillant provenant d'un site tiers ne soit injecté dans notre base de données.
+- **Sanitisation des données externes (URLs marchandes & textes) :** Lors de la saisie de liens marchands, de textes ou d'images, les données sont systématiquement nettoyées et filtrées avant d'être persistées via HTML Sanitizer de Symfony. On s'assure ainsi qu'aucun code malveillant ne soit injecté dans notre base de données.
 
 ## Eco-conception
 
@@ -55,8 +55,6 @@ L'architecture de l'application intègre des pratiques d'éco-conception visant 
 - **Lazy Loading :** Pour économiser les ressources processeur du client, j'utilise le Lazy Loading sur les composants Vue.js et les images. Cela garantit que seuls les éléments visibles par l'utilisateur sont téléchargés et rendus, réduisant ainsi la consommation de batterie sur mobile et le temps de chargement initial.
 
 - **Minification et formats légers :** Tous les assets (CSS, JavaScript) sont minifiés via Vite pour réduire leur poids au maximum.
-
-- **Mutualisation du Scraping :** Le système vérifie d'abord si le produit existe déjà en base de données. Si oui, on réutilise les informations et l'image déjà stockées.
 
 - **Interface sobre :** Une interface épurée qui utilise des icônes vectorielles (SVG) légères plutôt que des images iconographiques lourdes. Le design évite les animations CSS complexes qui sollicitent inutilement le processeur.
 
