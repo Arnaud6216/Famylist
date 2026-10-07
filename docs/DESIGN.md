@@ -1,3 +1,13 @@
+### Conception UX/UI & Maquettes
+
+- **Maquettes Figma (Basse Fidélité & Haute Fidélité) :**  
+  👉 [Lien vers Figma](https://www.figma.com/design/j8MZ9n32qECkVor2IFlqNB/Famylist?node-id=58-381&t=XMtRT1fEOcfsPnGt-1)
+
+- **Zoning :**  
+  Le schéma est disponible dans le dossier [`docs/mockup/zoning.png`](./mockup/zoning.png) :
+
+---
+
 ### Charte Graphique & Identité Visuelle
 
 #### Palette de couleurs
