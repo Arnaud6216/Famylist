@@ -17,9 +17,9 @@ CREATE TABLE lists (
         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- TABLE WISHES (Envies de cadeaux)
--- Si l'envie est disponible : reserved_at IS NULL et user_id IS NULL.
--- Si l'envie est réservée : reserved_at contient l'horodatage, user_id contient l'ID du membre ayant réservé.
+-- TABLE WISHES (Souhaits de cadeaux)
+-- Si le souhait est disponible : reserved_at IS NULL et user_id IS NULL.
+-- Si le souhait est réservé : reserved_at contient l'horodatage, user_id contient l'ID du membre ayant réservé.
 CREATE TABLE wishes (
     wish_id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,

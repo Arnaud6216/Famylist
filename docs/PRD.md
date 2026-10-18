@@ -4,7 +4,7 @@
 
 **L’organisation de cadeaux (Noël, anniversaires...) souffre de plusieurs problèmes récurrents :**
 
-- Le désordre des informations : Les idées de cadeaux par SMS, emails ou de vive voix. Résultat : on finit toujours par perdre l'info ou par oublier une envie importante.
+- Le désordre des informations : Les idées de cadeaux par SMS, emails ou de vive voix. Résultat : on finit toujours par perdre l'info ou par oublier un souhait important.
 - Le risque de doublons : Éviter d’acheter le même cadeau à quelqu’un à cause d’un manque d’organisation.
 - La barrière technique : Beaucoup d'outils actuels sont trop chargés ou trop portés sur la pub. Cela décourage souvent les membres de la famille qui ne sont pas à l’aise avec l’informatique.
 

@@ -38,7 +38,7 @@ Extrait pertinent : "You can only add Amazon stuff, you can't include anything o
 
 ### Source 4 : Avis des proches
 
-Ma famille et moi utilisons actuellement le site Listy.com pour gérer nos listes d'envies. En discutant avec eux de l'utilisation au quotidien, ils m'ont fait part de plusieurs points d'amélioration qu'ils aimeraient voir dans une nouvelle solution :
+Ma famille et moi utilisons actuellement le site Listy.com pour gérer nos listes de souhaits. En discutant avec eux de l'utilisation au quotidien, ils m'ont fait part de plusieurs points d'amélioration qu'ils aimeraient voir dans une nouvelle solution :
 
 > - Seules les personnes qui réservent peuvent voir la réservation, pas celui à qui on veut offrir le cadeau
 > - Quand on réserve, on ne voit pas le nom de ceux qui ont réservé, tout est anonyme pour tout le monde

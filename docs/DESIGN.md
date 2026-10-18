@@ -50,5 +50,5 @@ L'interface repose sur des **Design Tokens** (variables sémantiques réutilisab
 | **Espacement**   | `--spacing-page`   | Marge extérieure de l'écran (adaptatif Desktop / Mobile)   |
 | **Espacement**   | `--spacing-gap`    | Espace entre les cartes de la grille                       |
 | **Arrondi**      | `--radius-btn`     | Rayon de courbure des boutons et champs de formulaire      |
-| **Arrondi**      | `--radius-card`    | Rayon de courbure des cartes de listes et d'envies         |
+| **Arrondi**      | `--radius-card`    | Rayon de courbure des cartes de listes et de souhaits      |
 | **Arrondi**      | `--radius-modal`   | Rayon de courbure des fenêtres modales                     |

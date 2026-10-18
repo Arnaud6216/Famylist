@@ -10,14 +10,14 @@ Ce document regroupe le **Dictionnaire de Données** technique et fonctionnel ai
 2. [Dictionnaire de Données](#2-dictionnaire-de-données)
    - [2.1 Entité USERS (Utilisateurs / Membres)](#21-entité-users-utilisateurs--membres)
    - [2.2 Entité LISTS (Listes de souhaits)](#22-entité-lists-listes-de-souhaits)
-   - [2.3 Entité WISHES (Envies de cadeaux)](#23-entité-wishes-envies-de-cadeaux)
+   - [2.3 Entité WISHES (Souhaits de cadeaux)](#23-entité-wishes-souhaits-de-cadeaux)
    - [2.4 Entité SHARE_LINKS (Liens de partage public)](#24-entité-share_links-liens-de-partage-public)
    - [2.5 Entité FOLLOWED_LISTS (Listes suivies / Favoris)](#25-entité-followed_lists-listes-suivies--favoris)
 3. [Cycle de Vie & États des Données](#3-cycle-de-vie--états-des-données)
 4. [Règles de Gestion Métier (RG)](#4-règles-de-gestion-métier-rg)
    - [4.1 Authentification & Comptes Utilisateurs (RG-USER)](#41-authentification--comptes-utilisateurs-rg-user)
    - [4.2 Gestion des Listes de Souhaits (RG-LIST)](#42-gestion-des-listes-de-souhaits-rg-list)
-   - [4.3 Gestion des Envies / Articles (RG-WISH)](#43-gestion-des-envies--articles-rg-wish)
+   - [4.3 Gestion des Souhaits / Articles (RG-WISH)](#43-gestion-des-souhaits--articles-rg-wish)
    - [4.4 Partage & Accès Public (RG-SHARE)](#44-partage--accès-public-rg-share)
    - [4.5 Consultation Publique & Ergonomie (RG-CONSULT)](#45-consultation-publique--ergonomie-rg-consult)
    - [4.6 Réservation de Cadeaux (RG-RESERV)](#46-réservation-de-cadeaux-rg-reserv)
@@ -37,7 +37,7 @@ erDiagram
     USERS ||--o{ WISHES : "réserve (0,n)"
     USERS ||--o{ FOLLOWED_LISTS : "suit (0,n)"
     LISTS ||--o{ WISHES : "contient (1-n)"
-    LISTS ||--|| SHARE_LINKS : "partagée via (1,1)"
+    LISTS ||--|| SHARE_LINKS : "génère (1,1)"
     LISTS ||--o{ FOLLOWED_LISTS : "est suivie par (0,n)"
 
     USERS {
@@ -127,14 +127,14 @@ Représente une liste thématique de souhaits créée par un membre pour un év�
 
 ---
 
-## 2.3 Entité WISHES (Envies de cadeaux)
+## 2.3 Entité WISHES (Souhaits de cadeaux)
 
 Représente un article ou une idée de cadeau rattachée à une liste de souhaits, pouvant être réservé par un proche.
 
 | Nom du champ (Code SQL) | Libellé Métier            | Type PostgreSQL | Nullabilité | Valeur par défaut   | Contraintes & Validations                      | Description & Rôle métier                                                                       |
 | :---------------------- | :------------------------ | :-------------- | :---------- | :------------------ | :--------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| `wish_id`               | Identifiant de l'envie    | `SERIAL` (INT)  | PK, NN      | Auto-incrément      | Clé primaire                                   | Identifiant technique unique de l'article / envie.                                              |
-| `title`                 | Titre de l'envie          | `VARCHAR(255)`  | NN          | -                   | Max 255 caractères, non vide                   | Nom du produit ou de l'idée (saisie manuelle en V1).                                            |
+| `wish_id`               | Identifiant du souhait    | `SERIAL` (INT)  | PK, NN      | Auto-incrément      | Clé primaire                                   | Identifiant technique unique de l'article / souhait.                                            |
+| `title`                 | Titre du souhait          | `VARCHAR(255)`  | NN          | -                   | Max 255 caractères, non vide                   | Nom du produit ou de l'idée (saisie manuelle en V1).                                            |
 | `comment`               | Commentaire / Précisions  | `TEXT`          | NULL        | `NULL`              | Texte libre optionnel                          | Précisions (taille, pointure, couleur, préférence d'occasion, etc.).                            |
 | `price`                 | Prix estimatif (€)        | `DECIMAL(10,2)` | NULL        | `NULL`              | Montant décimal positif (>= 0.00)              | Prix indicatif du cadeau, saisi manuellement en V1.                                             |
 | `website_url`           | Lien marchand             | `TEXT`          | NULL        | `NULL`              | URL valide, sanitisation HTML                  | Lien web vers la boutique en ligne pour achat (saisi manuellement en V1 ; scraping auto en V2). |
@@ -142,7 +142,7 @@ Représente un article ou une idée de cadeau rattachée à une liste de souhait
 | `created_at`            | Date d'ajout              | `TIMESTAMP`     | NN          | `CURRENT_TIMESTAMP` | Horodatage serveur ISO 8601                    | Date et heure de création de l'article dans la liste.                                           |
 | `reserved_at`           | Horodatage de réservation | `TIMESTAMP`     | NULL        | `NULL`              | NULL si non réservé, sinon date/heure courante | Enregistre le moment précis où un proche a réservé l'article.                                   |
 | `user_id`               | Membre réservant          | `INT`           | FK, NULL    | `NULL`              | Référence `users(user_id)` ON DELETE SET NULL  | Utilisateur ayant réservé ce cadeau. `NULL` si l'article est disponible.                        |
-| `list_id`               | Liste parente             | `INT`           | FK, NN      | -                   | Référence `lists(list_id)` ON DELETE CASCADE   | Référence vers la liste à laquelle appartient cette envie.                                      |
+| `list_id`               | Liste parente             | `INT`           | FK, NN      | -                   | Référence `lists(list_id)` ON DELETE CASCADE   | Référence vers la liste à laquelle appartient ce souhait.                                       |
 
 ---
 
@@ -175,20 +175,20 @@ Table de liaison permettant aux utilisateurs connectés de mémoriser et suivre 
 
 # 3. Cycle de Vie & États des Données
 
-### État d'une Envie de Cadeau (`wishes`)
+### État d'un Souhait de Cadeau (`wishes`)
 
-Une envie possède deux états logiques déduits de la combinaison de `wishes.user_id` et `wishes.reserved_at` :
+Un souhait possède deux états logiques déduits de la combinaison de `wishes.user_id` et `wishes.reserved_at` :
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Disponible : Création de l'envie par le propriétaire (user_id IS NULL, reserved_at IS NULL)
+    [*] --> Disponible : Création du souhait par le propriétaire (user_id IS NULL, reserved_at IS NULL)
 
     Disponible --> Réservé : Action 'Réserver' par un membre tiers authentifié (user_id = auth_user.id, reserved_at = NOW())
 
     Réservé --> Disponible : Action 'Annuler ma réservation' par le réservant (user_id = NULL, reserved_at = NULL)
 
-    Disponible --> [*] : Suppression de l'envie ou de la liste par le propriétaire
-    Réservé --> [*] : Suppression de l'envie ou de la liste par le propriétaire
+    Disponible --> [*] : Suppression du souhait ou de la liste par le propriétaire
+    Réservé --> [*] : Suppression du souhait ou de la liste par le propriétaire
 ```
 
 | État Métier    | `wishes.user_id` | `wishes.reserved_at` | Affichage Propriétaire                        | Affichage Tiers (Visiteur / Autre membre)                    | Affichage Membre Réservant                                         |
@@ -219,16 +219,16 @@ stateDiagram-v2
 
 ---
 
-## 4.3 Gestion des Envies / Articles (RG-WISH)
+## 4.3 Gestion des Souhaits / Articles (RG-WISH)
 
-- **RG-WISH-01 (Attribution à une liste) :** Une envie appartient obligatoirement à une seule liste de souhaits (`wishes.list_id` NOT NULL).
-- **RG-WISH-02 (Droit d'ajout) :** Seul le propriétaire d'une liste a le droit d'ajouter des envies à celle-ci.
+- **RG-WISH-01 (Attribution à une liste) :** Un souhait appartient obligatoirement à une seule liste de souhaits (`wishes.list_id` NOT NULL).
+- **RG-WISH-02 (Droit d'ajout) :** Seul le propriétaire d'une liste a le droit d'ajouter des souhaits à celle-ci.
 - **RG-WISH-03 (Modes de saisie - Cadrage V1 & V2) :**
-  - _En V1 :_ L'ajout d'une envie se fait exclusivement par saisie manuelle via formulaire (titre obligatoire, prix estimatif, commentaire/description, URL marchande directe optionnelle pour guider les proches, URL d'image optionnelle).
+  - _En V1 :_ L'ajout d'un souhait se fait exclusivement par saisie manuelle via formulaire (titre obligatoire, prix estimatif, commentaire/description, URL marchande directe optionnelle pour guider les proches, URL d'image optionnelle).
   - _En V2 :_ L'extraction automatique des métadonnées (titre, prix, photo) par scraping d'URL sera implémentée ultérieurement afin de préserver la simplicité et la robustesse de la version initiale.
-- **RG-WISH-04 (Sanitisation des données saisies) :** Toute donnée textuelle ou URL saisie dans le formulaire d'ajout/modification d'une envie (notamment `website_url` et `picture_url`) est impérativement nettoyée par le composant `HTML Sanitizer` de Symfony avant persistance pour prévenir les failles XSS.
+- **RG-WISH-04 (Sanitisation des données saisies) :** Toute donnée textuelle ou URL saisie dans le formulaire d'ajout/modification d'un souhait (notamment `website_url` et `picture_url`) est impérativement nettoyée par le composant `HTML Sanitizer` de Symfony avant persistance pour prévenir les failles XSS.
 - **RG-WISH-05 (Validité du prix) :** Lorsque le champ `price` est renseigné, sa valeur doit être un nombre décimal supérieur ou égal à zéro (`price >= 0.00`).
-- **RG-WISH-06 (Droit de modification et suppression de l'envie) :** Seul le propriétaire de la liste est habilité à modifier ou supprimer une envie de sa liste.
+- **RG-WISH-06 (Droit de modification et suppression du souhait) :** Seul le propriétaire de la liste est habilité à modifier ou supprimer un souhait de sa liste.
 
 ---
 
@@ -251,14 +251,14 @@ stateDiagram-v2
   - Les données de réservation (`user_id`, `reserved_at`) sont systématiquement omises du payload JSON lorsqu'il consulte sa propre liste (contexte de sérialisation).
 - **RG-CONSULT-03 (Anonymat strict inter-contributeurs) :** Pour les tiers (visiteurs et autres membres connectés), un cadeau réservé affiche uniquement la mention neutre "Réservé". L'identité du réservant n'est jamais exposée aux autres contributeurs.
 - **RG-CONSULT-04 (Sobriété d'affichage) :** Un article disponible (non réservé) n'affiche aucun badge superflu afin de préserver une interface épurée. Seuls les articles réservés arborent un badge visuel distinctif.
-- **RG-CONSULT-05 (Incitation contextuelle à la connexion) :** Lorsqu'un visiteur non authentifié clique sur "Réserver ce cadeau", une modale l'invite à se connecter ou à créer rapidement un compte, en conservant l'envie ciblée en mémoire pour valider l'action aussitôt après l'authentification.
+- **RG-CONSULT-05 (Incitation contextuelle à la connexion) :** Lorsqu'un visiteur non authentifié clique sur "Réserver ce cadeau", une modale l'invite à se connecter ou à créer rapidement un compte, en conservant le souhait ciblé en mémoire pour valider l'action aussitôt après l'authentification.
 
 ---
 
 ## 4.6 Réservation de Cadeaux (RG-RESERV)
 
 - **RG-RESERV-01 (Authentification obligatoire) :** Toute action de réservation (`POST /api/wishes/{id}/reserve`) exige impérativement un utilisateur connecté avec un rôle valide (`ROLE_USER`). Le mode "réservation invité non connecté" est strictement interdit.
-- **RG-RESERV-02 (Disponibilité préalable) :** Une envie ne peut être réservée que si elle est actuellement libre (`wishes.user_id IS NULL` ET `wishes.reserved_at IS NULL`).
+- **RG-RESERV-02 (Disponibilité préalable) :** Un souhait ne peut être réservé que s'il est actuellement libre (`wishes.user_id IS NULL` ET `wishes.reserved_at IS NULL`).
 - **RG-RESERV-03 (Horodatage et attribution atomique) :** La validation d'une réservation associe de façon atomique l'identifiant du membre connecté (`wishes.user_id = auth_user.id`) et l'horodatage courant du serveur (`wishes.reserved_at = CURRENT_TIMESTAMP`).
 - **RG-RESERV-04 (Interdiction d'auto-réservation) :** Un utilisateur ne peut en aucun cas réserver un cadeau sur une liste dont il est lui-même le propriétaire (`wish.list.user_id != auth_user.id`, contrôlé par `WishVoter` -> HTTP 403 Forbidden).
 - **RG-RESERV-05 (Gestion de la concurrence / Anti-doublon) :** En cas de tentative de réservation simultanée d'un même cadeau par deux membres, une transaction PostgreSQL avec verrouillage garantit l'atomicité. La seconde transaction est rejetée avec une erreur de conflit (HTTP 409 Conflict) et l'interface actualise immédiatement le statut avec le badge "Réservé".
@@ -268,7 +268,7 @@ stateDiagram-v2
 
 ## 4.7 Annulation de Réservation (RG-CANCEL)
 
-- **RG-CANCEL-01 (Droit strict d'annulation) :** Seul l'utilisateur qui a personnellement réservé l'envie (`wishes.user_id == auth_user.id`, contrôlé par `WishVoter` via `DELETE /api/wishes/{id}/reserve`) a le pouvoir d'annuler cette réservation. Toute tentative par un tiers est rejetée (HTTP 403 Forbidden).
+- **RG-CANCEL-01 (Droit strict d'annulation) :** Seul l'utilisateur qui a personnellement réservé le souhait (`wishes.user_id == auth_user.id`, contrôlé par `WishVoter` via `DELETE /api/wishes/{id}/reserve`) a le pouvoir d'annuler cette réservation. Toute tentative par un tiers est rejetée (HTTP 403 Forbidden).
 - **RG-CANCEL-02 (Remise en disponibilité atomique) :** L'annulation réinitialise simultanément les champs `wishes.user_id` et `wishes.reserved_at` à `NULL`.
 - **RG-CANCEL-03 (Réactivité immédiate) :** Dès l'annulation validée, le badge "Réservé" disparaît instantanément et le bouton d'action "Réserver ce cadeau" redevient accessible à l'ensemble des proches contributeurs.
 

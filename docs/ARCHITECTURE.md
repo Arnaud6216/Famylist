@@ -58,7 +58,7 @@ L'architecture de l'application intègre des pratiques d'éco-conception visant 
 
 - **Interface sobre :** Une interface épurée qui utilise des icônes vectorielles (SVG) légères plutôt que des images iconographiques lourdes. Le design évite les animations CSS complexes qui sollicitent inutilement le processeur.
 
-- **Nettoyage automatique des données obsolètes :** Une liste d'envies pour un anniversaire ou Noël perd de son utilité après l'événement. Un principe de sobriété consiste à mettre en place une stratégie de cycle de vie des données : les listes "expirées" depuis longtemps ou les images de cadeaux supprimés sont automatiquement nettoyées par une tâche planifiée (Cron job)
+- **Nettoyage automatique des données obsolètes :** Une liste de souhaits pour un anniversaire ou Noël perd de son utilité après l'événement. Un principe de sobriété consiste à mettre en place une stratégie de cycle de vie des données : les listes "expirées" depuis longtemps ou les images de cadeaux supprimés sont automatiquement nettoyées par une tâche planifiée (Cron job)
 
 ## Stack
 
